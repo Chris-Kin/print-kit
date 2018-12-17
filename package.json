@@ -1,0 +1,19 @@
+{
+  "name": "print-kit",
+  "version": "1.0.0",
+  "description": "web打印工具，为页面添加页眉页脚页码，正确将页面分页。",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/attacking/print-kit.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/attacking/print-kit/issues"
+  },
+  "homepage": "https://github.com/attacking/print-kit#readme"
+}
