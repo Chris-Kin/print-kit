@@ -189,6 +189,6 @@ export default {
     // 隐藏掉原来的节点
     groupContainer.style.display = 'none';
 
-    setTimeout(() => callback(), 0);
+    setTimeout(() => typeof callback === 'function' && callback(), 0);
   },
 };
