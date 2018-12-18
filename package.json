@@ -2,8 +2,9 @@
   "name": "print-kit",
   "version": "1.0.0",
   "description": "web打印工具，为页面添加页眉页脚页码，正确将页面分页。",
-  "main": "src/index.js",
+  "main": "index.js",
   "scripts": {
+    "start": "webpack --config webpack.config.js --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -15,5 +16,14 @@
   "bugs": {
     "url": "https://github.com/attacking/print-kit/issues"
   },
-  "homepage": "https://github.com/attacking/print-kit#readme"
+  "homepage": "https://github.com/attacking/print-kit#readme",
+  "dependencies": {
+    "babel": "^6.23.0",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.5",
+    "webpack": "^4.27.1"
+  },
+  "devDependencies": {
+    "webpack-cli": "^3.1.2"
+  }
 }
