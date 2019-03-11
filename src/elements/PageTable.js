@@ -75,21 +75,20 @@ class PageTable extends GroupItem {
       const row = rows[i];
       // 识别 rowSpan信息
       // TODO: 暂时只支持识别第一行，以后需要支持更多
-      if (i === 0) {
-        const cells = row.cells;
-        for (let j = 0, jl = cells.length; j < jl; j += 1) {
-          const cell = cells[j];
-          const rowSpan = cell.rowSpan;
-          if (rowSpan && rowSpan > 1) {
-            if (!this.rowSpans[j]) {
-              this.rowSpans[j] = [];
-            }
-            this.rowSpans[j].push({
-              start: i,
-              end: (i + rowSpan) - 1,
-              element: cell,
-            });
+      this.rowSpans[i] = [];
+      const cells = row.cells;
+      for (let j = 0, jl = cells.length; j < jl; j += 1) {
+        const cell = cells[j];
+        const rowSpan = cell.rowSpan;
+        if (rowSpan && rowSpan > 1) {
+          if (!this.rowSpans[i][j]) {
+            this.rowSpans[i][j] = [];
           }
+          this.rowSpans[i][j].push({
+            start: i,
+            end: (i + rowSpan) - 1,
+            element: cell,
+          });
         }
       }
       this.rows.push(row);
@@ -116,7 +115,6 @@ class PageTable extends GroupItem {
       cloneChildrenTo(this.tHead, tBody);
       // newTable.appendChild(this.tHead.cloneNode(true));
     }
-
     // 逐个添加行
     for (let i = this.validRowIndex; i < nextPageRowIndex; i += 1) {
       const newRow = this.rows[i].cloneNode(true);
@@ -124,23 +122,23 @@ class PageTable extends GroupItem {
       // 如果存在匹配的 合并单元格信息，那就增加合并信息
       // TODO: 暂时只在第一行做此判断，以及存在的话设置成通栏。以后需要改成完整的方式
       if (i === this.validRowIndex) {
-        this.rowSpans.forEach((spans, colIndex) => {
+        const arr = this.rowSpans[i].length ? this.rowSpans[i] : [...this.rowSpans.slice(0, this.validRowIndex)].reverse().find(el => el.length);
+        arr && arr.length && arr.forEach((spans, colIndex) => {
           spans.some(({ start, end, element }) => {
+            // i是循环到新分页的tr索引，如果i===start意味着某个具有rowSpan的tr正好是从新页开始渲染的，此时并不需要该包做插入sowSpan td的工作
             if (i > start && i <= end) {
               // 这个合并信息对于这个单元格是生效的
               const newCell = newRow.insertCell(colIndex);
               newCell.className = element.className;
-              newCell.rowSpan = ((start + end) - i) + 1;
+              newCell.rowSpan = end - i + 1;
               cloneChildrenTo(element, newCell);
             }
             return null;
           });
         });
       }
-
       tBody.appendChild(newRow);
     }
-
     // TODO: 这里还没有考虑 合并单元格 的情况
 
     // 把当前表格用用原来的一堆div包裹下，那就继续包裹之
@@ -154,7 +152,6 @@ class PageTable extends GroupItem {
 
       return newTableWrapper;
     }
-
     return newTable;
   }
 
@@ -232,7 +229,6 @@ class PageTable extends GroupItem {
 
     // 放置整个表格
     newTable = container.appendChild(newTable);
-
     if (nextPageRowIndex >= this.rows.length) {
       // 都放完了
       return {

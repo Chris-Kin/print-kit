@@ -73,7 +73,6 @@ function addPageHeaders(container, pagedItems) {
 
 // 往容器中增加footers
 function addPageFooters(container, pagedItems, validHeight) {
-  // console.log('剩余空间' , validHeight, 9999);
   pagedItems.PageFooter.list.map(
     listItem => listItem.element.cloneNode(true)
   ).forEach((pageHeader) => {
@@ -84,6 +83,7 @@ function addPageFooters(container, pagedItems, validHeight) {
 
 // 把 pagedItems 数据结构转化为 pages
 function pagedItems2pages(pagedItems, isLastGroup) {
+  // content区域可利用高度 = A4纸总高度 - pagedItems的header高度 - pagedItems的footer高度
   const validPageHeight = PageHeight - pagedItems.PageHeader.height - pagedItems.PageFooter.height;
   const { layoutedContainer } = pagedItems.Group;
 
@@ -101,6 +101,7 @@ function pagedItems2pages(pagedItems, isLastGroup) {
     // 尝试往节点中填充
     const item = list[i];
     const nextItem = i < list.length - 1 ? list[i + 1] : null;
+    // 调用各个角色的put2container方法塞入dom
     const result = item.put2container(layoutedContainer, {
       validHeight,
       nextItem,
@@ -145,20 +146,30 @@ function pagedItems2pages(pagedItems, isLastGroup) {
   }
   addPageFooters(layoutedContainer, pagedItems, validHeight);
   everyGroupsPage.push(pagedItems.Group.howManyPage);
+  // 如果不是最后一组group，则需要在该group后添加分页符
   if (!isLastGroup) {
     addPageBreak(layoutedContainer);
   }
 }
 
 // 布局某个 group
+/**
+ *
+ * @param {要布局的group元素} groupEl
+ * @param {布局后放置的目标位置} layoutedContainer
+ * @param {是否是最后一个group} isLastGroup
+ */
 function layoutGroup(groupEl, layoutedContainer, isLastGroup) {
-  // 获得每个元素的信息
+  // 生成group对象pagedItems，该对象包含了group的构成要素，之后的处理都是往该对象中塞数据
   const pagedItems = buildDefaultPagedItems();
   pagedItems.Group.layoutedContainer = layoutedContainer;
+  // 获得group下的所有角色，一一处理（将各个角色放在pagedItems中，供pagedItems2pages使用）
   getEls('[data-paged]', groupEl).forEach((itemEl) => {
+    // 当前角色具体是什么 [PageHeader, PageFooter, MiniBlock, GroupHeader, PageTable, PageTableTail, MiniBlockTail]其一
     const Class = attr2class[itemEl.getAttribute('data-paged')];
     const instance = Class.create(itemEl);
     const typeName = instance.typeName;
+    // 如果Class类型属于pagedItems里预置类型，则往里塞，否则把这个陌生角色放在Content中。
     if (pagedItems[typeName]) {
       // 各种头或尾节点
       const pagedItem = pagedItems[typeName];
@@ -173,10 +184,11 @@ function layoutGroup(groupEl, layoutedContainer, isLastGroup) {
 }
 
 export default {
-  // 布局多个 Group
+  // 循环布局多个 Group
   layout(groupContainer, layoutedContainer, isPagedByGroup, callback) {
     groupContainer = getEl(groupContainer);
     layoutedContainer = getEl(layoutedContainer);
+    // 获取目标区域里的所有group元素
     const groupEls = getEls('[data-paged="group"]', groupContainer);
 
     const lastGroupIndex = groupEls.length - 1;
