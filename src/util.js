@@ -31,9 +31,8 @@ export const cloneChildrenTo = (fromParent, toParent) => {
  * 添加分页信息
  * @param {已布局后的大dom} layoutedContainer
  * @param {每个group的页数信息} everyGroupsPage
- * @param {是否按group子分页} isPagedByGroup
  */
-export const addPageInfo = (layoutedContainer, everyGroupsPage, isPagedByGroup = false) => {
+export const addPageInfo = (layoutedContainer, everyGroupsPage) => {
   // 打印的总页数
   let totalPage = 0;
   // 每一个group的页数信息
@@ -52,36 +51,34 @@ export const addPageInfo = (layoutedContainer, everyGroupsPage, isPagedByGroup =
   pageInfoDomArr.forEach((pageInfoDom, i) => {
     const pageCurDom = getEl('[data-page-cur]', pageInfoDom);
     const pageTotalDom = getEl('[data-page-total]', pageInfoDom);
-    // 页码类型是总体标号还是按组标号
-    if (isPagedByGroup) {
-      const index = i + 1;
-      let curIndex;
-      let curTotal;
-      // 获取子页码信息
-      for (let j = 0; j < reduceGroupPageSum.length; j++) {
-        if (reduceGroupPageSum[j] >= index && index > (reduceGroupPageSum[j - 1] || 0)) {
-          curIndex = index - (reduceGroupPageSum[j - 1] || 0);
-          curTotal = reduceGroupPageSum[j] - (reduceGroupPageSum[j - 1] || 0);
-          break;
-        }
+    const pageGroupCurDom = getEl('[data-page-group-cur]', pageInfoDom);
+    const pageGroupTotalDom = getEl('[data-page-group-total]', pageInfoDom);
+    const index = i + 1;
+    let curIndex;
+    let curTotal;
+    // 获取子页码信息
+    for (let j = 0; j < reduceGroupPageSum.length; j++) {
+      if (reduceGroupPageSum[j] >= index && index > (reduceGroupPageSum[j - 1] || 0)) {
+        curIndex = index - (reduceGroupPageSum[j - 1] || 0);
+        curTotal = reduceGroupPageSum[j] - (reduceGroupPageSum[j - 1] || 0);
+        break;
       }
-      // 当前页
-      if (pageCurDom) {
-        pageCurDom.innerText = curIndex;
-      }
-      // 总页数
-      if (pageTotalDom) {
-        pageTotalDom.innerText = curTotal;
-      }
-    } else {
-      // 当前页
-      if (pageCurDom) {
-        pageCurDom.innerText = i + 1;
-      }
-      // 总页数
-      if (pageTotalDom) {
-        pageTotalDom.innerText = totalPage;
-      }
+    }
+    // group当前页
+    if (pageCurDom) {
+      pageGroupCurDom.innerText = curIndex;
+    }
+    // group总页数
+    if (pageTotalDom) {
+      pageGroupTotalDom.innerText = curTotal;
+    }
+    // 当前页
+    if (pageCurDom) {
+      pageCurDom.innerText = i + 1;
+    }
+    // 总页数
+    if (pageTotalDom) {
+      pageTotalDom.innerText = totalPage;
     }
   });
 }

@@ -185,7 +185,7 @@ function layoutGroup(groupEl, layoutedContainer, isLastGroup) {
 
 export default {
   // 循环布局多个 Group
-  layout(groupContainer, layoutedContainer, isPagedByGroup, callback) {
+  layout(groupContainer, layoutedContainer, callback) {
     groupContainer = getEl(groupContainer);
     layoutedContainer = getEl(layoutedContainer);
     // 获取目标区域里的所有group元素
@@ -197,7 +197,7 @@ export default {
     });
 
     // 添加页码信息
-    addPageInfo(layoutedContainer, everyGroupsPage, isPagedByGroup);
+    addPageInfo(layoutedContainer, everyGroupsPage);
     // 隐藏掉原来的节点
     groupContainer.style.display = 'none';
 

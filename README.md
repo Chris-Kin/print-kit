@@ -26,7 +26,6 @@ layout函数参数解释
    *
    * @param {指定print-kit要重排的dom容器data-paged="group-container"} groupContainer
    * @param {指定重排后的dom放置在哪里} layoutedContainer
-   * @param {是否按group提供分页信息（false：只用一组连贯的页码；true：每一个group都有各自的页码）} isPagedByGroup
    * @param {重排后的回调} callback
    */
   layout(groupContainer, layoutedContainer, isPagedByGroup, callback) {
@@ -50,3 +49,30 @@ layout函数参数解释
 - page-table-tail
 	表格的尾巴，总会与表格同页展示
 
+
+## 分页页码添加方式
+在打印页面时，希望能够标注出页码信息，结合实际业务场景，页码的标注方式有两类，一类是按照总体纸张数量标注页码，另一类是按照group来分开标注页码，（或者两者同时都需标注）
+
+在group节点内，书写具有规定属性的节点即可：
+```html
+  <div
+    data-page-info
+    style={{
+      textAlign: 'right',
+      position: 'relative',
+      bottom: 0,
+      right: 0,
+    }}
+  >
+    当前组页码：
+    <span data-page-group-cur />
+    /
+    <span data-page-group-total />
+    <span className="mr20" />
+    总页码：
+    <span data-page-cur />
+    /
+    <span data-page-total />
+  </div>
+```
+打印工具会自动将页码信息显示在对应的位置。
