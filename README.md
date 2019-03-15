@@ -76,3 +76,11 @@ layout函数参数解释
   </div>
 ```
 打印工具会自动将页码信息显示在对应的位置。
+
+## 由于内部排版计算高度的问题，需设置指定样式
+@page {
+  size: auto;   /* auto is the initial value */
+  margin: 5mm;  /* this affects the margin in the printer settings */
+}
+打印区域的宽度设置为：
+width: 200mm;
