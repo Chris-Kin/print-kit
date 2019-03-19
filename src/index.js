@@ -13,7 +13,7 @@ import config from './config';
 const PageHeight = config.PageHeight;
 
 // 每一个group的页数信息
-const everyGroupsPage = [];
+let everyGroupsPage = [];
 
 // 元素属性到对应处理类的对应关系
 const attr2class = {
@@ -198,8 +198,8 @@ export default {
 
     // 添加页码信息
     addPageInfo(layoutedContainer, everyGroupsPage);
-    // 隐藏掉原来的节点
-    groupContainer.style.display = 'none';
+    // 清空页码信息
+    everyGroupsPage = [];
 
     setTimeout(() => typeof callback === 'function' && callback(), 0);
   },
