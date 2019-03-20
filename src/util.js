@@ -65,11 +65,11 @@ export const addPageInfo = (layoutedContainer, everyGroupsPage) => {
       }
     }
     // group当前页
-    if (pageCurDom) {
+    if (pageGroupCurDom) {
       pageGroupCurDom.innerText = curIndex;
     }
     // group总页数
-    if (pageTotalDom) {
+    if (pageGroupTotalDom) {
       pageGroupTotalDom.innerText = curTotal;
     }
     // 当前页
