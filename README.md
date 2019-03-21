@@ -34,20 +34,22 @@ layout函数参数解释
 ```
 
 ## dom角色解释
+- group
+  组，一次打印可以只有一组页面，也可以有多组页面。每组页面具有独立的页眉页脚分页等部件。
 - page-header
-	页眉
+	页眉，需放在group中指定
 - page-footer
-	页脚
+	页脚，需放在group中指定
 - mini-block
-	不会被分页拆分的最小单位块
+	不会被分页拆分的最小单位块，当前页面空间不容纳mini-block时，会整体放在下一页
 - mini-block-tail
 	最小单位块的尾巴，总会与最小单位块同页展示
 - group-header
-	组信息块的头部
+	组信息块的头部，需放在group中指定。不同于page-header，group-header是组的标题
 - page-table
-	页面中的表格
+	页面中的表格，会对表格元素做特殊处理，如跨页的表格拆分等问题
 - page-table-tail
-	表格的尾巴，总会与表格同页展示
+	表格的尾巴，总会与表格同页展示，若page-table的tr正好占满了某一页导致page-table-tail必须分页时，此时page-table-tail会将table的最后几行tr放在第二页显示
 
 
 ## 分页页码添加方式
