@@ -1,6 +1,6 @@
 {
   "name": "print-kit",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "web打印工具，为页面添加页眉页脚页码，正确将页面分页。",
   "main": "dist/index.js",
   "scripts": {
