@@ -137,7 +137,7 @@ function pagedItems2pages(pagedItems, isLastGroup) {
       pageContainerDom.setAttribute('role', 'container');
       layoutedContainer.appendChild(pageContainerDom);
       // 新页面
-      addPageHeaders(layoutedContainer, pagedItems);
+      // addPageHeaders(layoutedContainer, pagedItems);
 
       // 重置部分数据
       validHeight = validPageHeight;
