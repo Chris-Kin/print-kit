@@ -93,10 +93,10 @@ function pagedItems2pages(pagedItems, isLastGroup) {
   let validHeight = validPageHeight;
   const { list } = pagedItems.Content;
 
-  let iszfrom0 = false;
+  let isFrom0 = false;
   for (let i = 0; i < list.length; i += 1) {
     // 第一页现增加页头
-    if (i === 0 && !iszfrom0) {
+    if (i === 0 && !isFrom0) {
       addPageHeaders(layoutedContainer, pagedItems);
     }
 
@@ -147,7 +147,7 @@ function pagedItems2pages(pagedItems, isLastGroup) {
         i -= 1;
         // 解决问题：如果group的第一页不为FULL_FILL，那么会导致i仍然为0，导致99行代码重复执行
         if (i === -1) {
-          iszfrom0 = true;
+          isFrom0 = true;
         }
       };
     }
