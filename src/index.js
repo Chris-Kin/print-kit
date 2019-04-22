@@ -92,9 +92,11 @@ function pagedItems2pages(pagedItems, isLastGroup) {
   layoutedContainer.appendChild(pageContainerDom);
   let validHeight = validPageHeight;
   const { list } = pagedItems.Content;
+
+  let iszfrom0 = false;
   for (let i = 0; i < list.length; i += 1) {
     // 第一页现增加页头
-    if (i === 0) {
+    if (i === 0 && !iszfrom0) {
       addPageHeaders(layoutedContainer, pagedItems);
     }
 
@@ -137,11 +139,17 @@ function pagedItems2pages(pagedItems, isLastGroup) {
       pageContainerDom.setAttribute('role', 'container');
       layoutedContainer.appendChild(pageContainerDom);
       // 新页面
-      // addPageHeaders(layoutedContainer, pagedItems);
+      addPageHeaders(layoutedContainer, pagedItems);
 
       // 重置部分数据
       validHeight = validPageHeight;
-      if (fillMode !== FULL_FILL) i -= 1;
+      if (fillMode !== FULL_FILL) {
+        i -= 1;
+        // 解决问题：如果group的第一页不为FULL_FILL，那么会导致i仍然为0，导致99行代码重复执行
+        if (i === -1) {
+          iszfrom0 = true;
+        }
+      };
     }
   }
   addPageFooters(layoutedContainer, pagedItems, validHeight);
