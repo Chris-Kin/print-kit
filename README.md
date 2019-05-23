@@ -27,6 +27,7 @@ layout函数参数解释
    * @param {指定print-kit要重排的dom容器data-paged="group-container"} groupContainer
    * @param {指定重排后的dom放置在哪里} layoutedContainer
    * @param {重排后的回调} callback
+   * @param {打印方向} mode 横向-horizontal 纵向-vertical
    */
   layout(groupContainer, layoutedContainer, isPagedByGroup, callback) {
   	// ...
