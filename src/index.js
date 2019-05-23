@@ -10,7 +10,6 @@ import PageTableTail from './elements/PageTableTail';
 import MiniBlockTail from './elements/MiniBlockTail';
 
 import config from './config';
-const PageHeight = config.PageHeight;
 
 // 每一个group的页数信息
 let everyGroupsPage = [];
@@ -50,7 +49,6 @@ function buildDefaultPagedItems() {
     },
   };
 }
-
 // 往容器中增加一个分页符
 function addPageBreak(container) {
   const pageBreakEl = document.createElement('div');
@@ -84,7 +82,7 @@ function addPageFooters(container, pagedItems, validHeight) {
 // 把 pagedItems 数据结构转化为 pages
 function pagedItems2pages(pagedItems, isLastGroup) {
   // content区域可利用高度 = A4纸总高度 - pagedItems的header高度 - pagedItems的footer高度
-  const validPageHeight = PageHeight - pagedItems.PageHeader.height - pagedItems.PageFooter.height;
+  const validPageHeight = config.PageHeight - pagedItems.PageHeader.height - pagedItems.PageFooter.height;
   const { layoutedContainer } = pagedItems.Group;
 
   const pageContainerDom = document.createElement('div');
@@ -193,7 +191,21 @@ function layoutGroup(groupEl, layoutedContainer, isLastGroup) {
 
 export default {
   // 循环布局多个 Group
-  layout(groupContainer, layoutedContainer, callback) {
+  /**
+   * @param {*} groupContainer
+   * @param {*} layoutedContainer
+   * @param {*} callback
+   * @param {横向还是纵向布局} mode 'horizontal'/'vertical'
+   */
+  layout(groupContainer, layoutedContainer, callback, mode = 'vertical') {
+    // 根据打印方向设置可打印高度
+    if (mode === 'horizontal') {
+      // 横向打印时的高度为A4纸的宽度
+      config.PageHeight = config.width;
+    } else {
+      // 纵向打印时的高度为A4纸的高度
+      config.PageHeight = config.height;
+    }
     groupContainer = getEl(groupContainer);
     layoutedContainer = getEl(layoutedContainer);
     // 获取目标区域里的所有group元素

@@ -3,7 +3,6 @@ import GroupItem from './GroupItem';
 import MiniBlockTail from './MiniBlockTail';
 
 import config from '../config';
-const PageHeight = config.PageHeight;
 
 class MiniBlock extends GroupItem {
   static create(element) {
@@ -30,7 +29,7 @@ class MiniBlock extends GroupItem {
     if (nextItem && nextItem.constructor === MiniBlockTail) {
       const nextItemHeight = nextItem.getHeight();
       if (elementHeight + nextItemHeight > validHeight) {
-        if (elementHeight + nextItemHeight <= PageHeight) {
+        if (elementHeight + nextItemHeight <= config.PageHeight) {
           return {
             fillMode: NOTHING_FILL,
           };
