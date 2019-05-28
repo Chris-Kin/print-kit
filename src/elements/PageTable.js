@@ -204,6 +204,37 @@ class PageTable extends GroupItem {
       }
     }
 
+    // 如果只能放下部分表格内容，那就实际演示下
+    if (nextPageRowIndex > this.validRowIndex && nextPageRowIndex < this.rows.length) {
+      // 先建立一个临时的表格，用于测试高度
+      let tempTable = this.wrapInANewTable(nextPageRowIndex);
+      tempTable = container.appendChild(tempTable);
+
+      heightNow = tempTable.offsetHeight;
+
+      if (heightNow >= validHeight) {
+        // TODO: 实际添加的高度已经超过了预留的高度，应该报警了
+      } else {
+        // 高度不足，那就继续添加测试之
+        const tbodyOfTempTable = tempTable.tBodies[0];
+
+        for (; nextPageRowIndex < this.rows.length; nextPageRowIndex += 1) {
+          // 添加新一行
+          tbodyOfTempTable.appendChild(this.rows[nextPageRowIndex].cloneNode(true));
+
+          // 确认高度
+          heightNow = tempTable.offsetHeight;
+          if (heightNow > validHeight) {
+            // 高度超了，说明最多添加到这行之前
+            break;
+          }
+        }
+      }
+
+      // 删除这个临时表格
+      container.removeChild(tempTable);
+    }
+
     // 如果已经都能放下了，那还需要判断下一个元素是不是 小尾巴（PageTableTail），如果是的话还需要连带计算
     if (nextPageRowIndex >= this.rows.length) {
       if (nextItem && nextItem.constructor === PageTableTail) {
