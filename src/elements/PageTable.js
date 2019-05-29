@@ -209,24 +209,39 @@ class PageTable extends GroupItem {
       // 先建立一个临时的表格，用于测试高度
       let tempTable = this.wrapInANewTable(nextPageRowIndex);
       tempTable = container.appendChild(tempTable);
+      const tbodyOfTempTable = tempTable.tBodies[0];
 
       heightNow = tempTable.offsetHeight;
 
-      if (heightNow >= validHeight) {
-        // TODO: 实际添加的高度已经超过了预留的高度，应该报警了
-      } else {
-        // 高度不足，那就继续添加测试之
-        const tbodyOfTempTable = tempTable.tBodies[0];
+      if (heightNow !== validHeight) {
+        if (heightNow > validHeight) {
+          // 实际添加的高度已经超过了预留的高度，应该往下减
+          for (; nextPageRowIndex > this.validRowIndex; nextPageRowIndex -= 1) {
+            // 删除最后一行
+            if (tbodyOfTempTable.lastChild) {
+              tbodyOfTempTable.removeChild(tbodyOfTempTable.lastChild);
+            }
 
-        for (; nextPageRowIndex < this.rows.length; nextPageRowIndex += 1) {
-          // 添加新一行
-          tbodyOfTempTable.appendChild(this.rows[nextPageRowIndex].cloneNode(true));
+            // 确认高度
+            heightNow = tempTable.offsetHeight;
+            if (heightNow <= validHeight) {
+              // 高度合适了，说明最多添加到这行之前
+              nextPageRowIndex -= 1;
+              break;
+            }
+          }
+        } else {
+          // 高度不足，那就继续添加测试之
+          for (; nextPageRowIndex < this.rows.length; nextPageRowIndex += 1) {
+            // 添加新一行
+            tbodyOfTempTable.appendChild(this.rows[nextPageRowIndex].cloneNode(true));
 
-          // 确认高度
-          heightNow = tempTable.offsetHeight;
-          if (heightNow > validHeight) {
-            // 高度超了，说明最多添加到这行之前
-            break;
+            // 确认高度
+            heightNow = tempTable.offsetHeight;
+            if (heightNow > validHeight) {
+              // 高度超了，说明最多添加到这行之前
+              break;
+            }
           }
         }
       }
