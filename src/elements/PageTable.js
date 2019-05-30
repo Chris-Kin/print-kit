@@ -205,7 +205,7 @@ class PageTable extends GroupItem {
     }
 
     // 如果只能放下部分表格内容，那就实际演示下
-    if (nextPageRowIndex > this.validRowIndex && nextPageRowIndex < this.rows.length) {
+    if (nextPageRowIndex > this.validRowIndex) {
       // 先建立一个临时的表格，用于测试高度
       let tempTable = this.wrapInANewTable(nextPageRowIndex);
       tempTable = container.appendChild(tempTable);
