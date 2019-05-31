@@ -73,9 +73,9 @@ function addPageHeaders(container, pagedItems) {
 function addPageFooters(container, pagedItems, validHeight) {
   pagedItems.PageFooter.list.map(
     listItem => listItem.element.cloneNode(true)
-  ).forEach((pageHeader) => {
-    pageHeader.style.paddingTop = `${validHeight}px`;
-    container.appendChild(pageHeader);
+  ).forEach((footer) => {
+    footer.style.paddingTop = `${validHeight}px`;
+    container.appendChild(footer);
   });
 }
 
@@ -85,9 +85,6 @@ function pagedItems2pages(pagedItems, isLastGroup) {
   const validPageHeight = config.PageHeight - pagedItems.PageHeader.height - pagedItems.PageFooter.height;
   const { layoutedContainer } = pagedItems.Group;
 
-  const pageContainerDom = document.createElement('div');
-  pageContainerDom.setAttribute('role', 'container');
-  layoutedContainer.appendChild(pageContainerDom);
   let validHeight = validPageHeight;
   const { list } = pagedItems.Content;
 
@@ -133,9 +130,7 @@ function pagedItems2pages(pagedItems, isLastGroup) {
 
       // 添加新页
       addPageBreak(layoutedContainer);
-      const pageContainerDom = document.createElement('div');
-      pageContainerDom.setAttribute('role', 'container');
-      layoutedContainer.appendChild(pageContainerDom);
+
       // 新页面
       addPageHeaders(layoutedContainer, pagedItems);
 
@@ -215,7 +210,6 @@ export default {
     groupEls.forEach((groupEl, i) => {
       layoutGroup(groupEl, layoutedContainer, i === lastGroupIndex);
     });
-
     // 添加页码信息
     addPageInfo(layoutedContainer, everyGroupsPage);
     // 清空页码信息
