@@ -23,12 +23,13 @@ class PageTable extends GroupItem {
     let wrappersNode = null;
     let nowElement = null;
     let loopEl = this.element;
+    // loopEl即 <table data-paged="page-table">...</table>
     while (loopEl) {
       if (loopEl.nodeName && loopEl.nodeName.toLowerCase() === 'table') {
         this.tableElement = loopEl;
         break;
       }
-
+      // 处理data-paged="page-table"属性的节点类型不是table的情况 如果 loopEl 的节点类型不是table，找到table为止？
       const newLoopEl = loopEl.cloneNode();
       if (wrappersNode === null) {
         wrappersNode = newLoopEl;
@@ -71,13 +72,13 @@ class PageTable extends GroupItem {
     ];
     // TODO: 这里写死了只获取第一个 tBody，可以改进
     const rows = this.tableElement.tBodies[0].rows;
-    for (let i = 0, il = rows.length; i < il; i += 1) {
+    for (let i = 0; i < rows.length; i += 1) {
       const row = rows[i];
       // 识别 rowSpan信息
       // TODO: 暂时只支持识别第一行，以后需要支持更多
       this.rowSpans[i] = [];
       const cells = row.cells;
-      for (let j = 0, jl = cells.length; j < jl; j += 1) {
+      for (let j = 0; j < cells.length; j += 1) {
         const cell = cells[j];
         const rowSpan = cell.rowSpan;
         if (rowSpan && rowSpan > 1) {
@@ -155,7 +156,7 @@ class PageTable extends GroupItem {
     return newTable;
   }
 
-  // 尝试把当前对象添加到容器中
+  // 尝试把当前对象添加到容器中 是被index.js反复调用(通过外层i减1实现重复调用)的函数，直到这个函数返回了full_fill
   put2container(container, { validHeight, nextItem }) {
     // 表格标题的高度大于有效高度，放不下了
     if (this.tHeadHeight > validHeight) {
@@ -192,6 +193,7 @@ class PageTable extends GroupItem {
     const validHeightWithoutTHead = validHeight - this.tHeadHeight;
 
     // 看看现在的高度最多能放下多少
+    // 以初次渲染的table各行高度计算，可以放多少行到当前的重排页面中（是个粗略值，因为重排后的表格每行高度可能会发生变化）
     let heightNow = 0;
     let nextPageRowIndex = this.validRowIndex;
     for (; nextPageRowIndex < this.rows.length; nextPageRowIndex += 1) {
@@ -204,29 +206,44 @@ class PageTable extends GroupItem {
       }
     }
 
-    // 如果只能放下部分表格内容，那就实际演示下
-    if (nextPageRowIndex > this.validRowIndex && nextPageRowIndex < this.rows.length) {
+    // 如果能表格内容，那就实际演示下
+    if (nextPageRowIndex > this.validRowIndex) {
       // 先建立一个临时的表格，用于测试高度
       let tempTable = this.wrapInANewTable(nextPageRowIndex);
       tempTable = container.appendChild(tempTable);
+      const tbodyOfTempTable = tempTable.tBodies[0];
 
       heightNow = tempTable.offsetHeight;
 
-      if (heightNow >= validHeight) {
-        // TODO: 实际添加的高度已经超过了预留的高度，应该报警了
-      } else {
-        // 高度不足，那就继续添加测试之
-        const tbodyOfTempTable = tempTable.tBodies[0];
+      if (heightNow !== validHeight) {
+        if (heightNow > validHeight) {
+          // 实际添加的高度已经超过了预留的高度，应该往下减
+          for (; nextPageRowIndex > this.validRowIndex; nextPageRowIndex -= 1) {
+            // 删除最后一行
+            if (tbodyOfTempTable.lastChild) {
+              tbodyOfTempTable.removeChild(tbodyOfTempTable.lastChild);
+            }
 
-        for (; nextPageRowIndex < this.rows.length; nextPageRowIndex += 1) {
-          // 添加新一行
-          tbodyOfTempTable.appendChild(this.rows[nextPageRowIndex].cloneNode(true));
+            // 确认高度
+            heightNow = tempTable.offsetHeight;
+            if (heightNow <= validHeight) {
+              // 高度合适了，说明最多添加到这行之前
+              nextPageRowIndex -= 1;
+              break;
+            }
+          }
+        } else {
+          // 高度不足，那就继续添加测试之
+          for (; nextPageRowIndex < this.rows.length; nextPageRowIndex += 1) {
+            // 添加新一行
+            tbodyOfTempTable.appendChild(this.rows[nextPageRowIndex].cloneNode(true));
 
-          // 确认高度
-          heightNow = tempTable.offsetHeight;
-          if (heightNow > validHeight) {
-            // 高度超了，说明最多添加到这行之前
-            break;
+            // 确认高度
+            heightNow = tempTable.offsetHeight;
+            if (heightNow > validHeight) {
+              // 高度超了，说明最多添加到这行之前
+              break;
+            }
           }
         }
       }

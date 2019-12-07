@@ -1,10 +1,11 @@
 {
   "name": "print-kit",
-  "version": "2.1.5",
+  "version": "2.1.7",
   "description": "web打印工具，为页面添加页眉页脚页码，正确将页面分页。",
   "main": "dist/index.js",
   "scripts": {
     "start": "webpack --config webpack.config.js --watch",
+    "build": "webpack --config webpack.config.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
